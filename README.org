@@ -1,0 +1,39 @@
+#+title: emacs-TOTP implements Time-based One-time Passwords (TOTP) like specified in RFC 6238)
+
+* Setup
+
+Until released on [[https://melpa.org/#/][MELPA]]:
+#+begin_src elisp
+  (add-to-list 'load-path "/path/to/emacs-totp")
+  (require 'totp)
+  ;; if you want the authenticator widget
+  (require 'totp-widget)
+#+end_src
+
+* Usage
+
+The command =totp-copy-pin-as-kill= interactively prompts for account
+names.  Non-existing Accounts/Secrets will be added to your configured
+[[https://www.gnu.org/software/emacs/manual/html_mono/auth.html][Emacs auth-source]] and will be available in the =completing-read=
+history in it will be used at the next invocation.
+
+** Secret input format
+
+Only HEX-Format is supported yet.
+
+Most OTP providers display secrets in Base32 format. Emacs doesn't
+have support for base32 decoding. You have to convert from Base32 to
+HEX using shell commands, for example:
+#+begin_src bash
+base32 -d <<<OV45GRTQARXOTU72TZLCBLUJDE2FYDSJ|xxd -g0 -p
+#+end_src
+
+
+** Widget
+
+=(totp-widget)= is self-explanatory:
+
+#+CAPTION: Emacs totp-widget
+[[totp-widget.gif]]
+
+The Widget-Code is just a quick hack: Pull requests are welcome!
