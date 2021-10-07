@@ -45,7 +45,7 @@
 The actual accounts are retrieved using `auth-source-search'.  New
 accounts can be creaing entering a non-existing account name using the command `totp'."
   (mapcar (apply-partially #'string-remove-prefix "TOTP:")
-	  (remove-if-not (lambda (host) (string-prefix-p "TOTP:" host))
+	  (cl-remove-if-not (lambda (host) (string-prefix-p "TOTP:" host))
 			 (mapcar (lambda (token) (plist-get token :host)) (auth-source-search :max 10000)))))
 
 

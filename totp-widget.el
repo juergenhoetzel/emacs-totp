@@ -26,7 +26,7 @@
 
 (require 'totp)
 (require 'widget)
-(require 'auth-source)
+(require 'wid-edit)
 
 (defvar totp-widget-progress nil)
 (defvar totp-widget-timer nil)
