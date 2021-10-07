@@ -16,13 +16,9 @@ jobs:
     strategy:
       matrix:
         emacs_version:
-          - 24.5
-          - 25.1
-          - 25.2
-          - 25.3
-          - 26.1
-          - 26.2
-          - 26.3
+          - 27.1
+          - 27.2
+          - snapshot
 
         allow_failures: [false]
 
@@ -38,10 +34,10 @@ jobs:
     - name: Check out the source code
       uses: actions/checkout@v2
 
-    - name: Byte-compile project
-      run: |
-        eldev -dtT -C compile --set all --warnings-as-errors
-
     - name: Run tests
       run: |
         eldev test
+
+    - name: Byte-compile project
+      run: |
+        eldev -dtT -C compile --set all --warnings-as-errors
