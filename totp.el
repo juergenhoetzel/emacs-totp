@@ -5,7 +5,8 @@
 ;; Author: Jürgen Hötzel <juergen@hoetzel.info>
 ;; Package-Requires: ((emacs "27.1"))
 ;; Version:    0.1
-;; Keywords: tools
+;; URL: https://github.com/juergenhoetzel/emacs-totp
+;; Keywords: tools pass password
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -50,6 +51,8 @@ accounts can be creaing entering a non-existing account name using the command `
 
 
 (defun totp--auth-info (account &optional create)
+  "Return auth source token for ACCOUNT.
+if CREATE is non-nil create a new token."
   (car
    (auth-source-search
     :host (format "TOTP:%s" account); PREFIX in order to not to come into conflict with otherentries

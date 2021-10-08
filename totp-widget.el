@@ -3,7 +3,10 @@
 ;; Copyright (C) 2021  Jürgen Hötzel
 
 ;; Author: Jürgen Hötzel <juergen@hoetzel.info>
-;; Keywords: comm
+;; Package-Requires: ((emacs "27.1"))
+;; Version:    0.1
+;; URL: https://github.com/juergenhoetzel/emacs-totp
+;; Keywords: tools pass password
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -20,7 +23,7 @@
 
 ;;; Commentary:
 
-;; 
+;; Google Authenticator like widget
 
 ;;; Code:
 
@@ -32,9 +35,11 @@
 (defvar totp-widget-timer nil)
 
 (defun totp-widget--elapsed ()
+  "Return pin code elapsed time."
   (mod (truncate (time-to-seconds)) 30))
 
 (defun totp-widget--cancel-timer ()
+  "Cancel widget redisplay timer."
   (when totp-widget-timer
     (cancel-timer totp-widget-timer)
     (setf totp-widget-timer nil)))
