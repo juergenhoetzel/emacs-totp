@@ -78,13 +78,13 @@ if CREATE is non-nil create a new token."
         (kill-append (totp secret) nil)
       (kill-new (totp secret)))))
 
-
 (defun totp--hex-decode-string (string)
   "Hex-decode STRING and return the result as a unibyte string."
   (apply #'unibyte-string
 	 (seq-map (lambda (s) (hexl-htoi (aref s 0) (aref s 1)))
 		  (seq-partition string 2))))
 
+;;;###autoload
 (defun totp(string &optional time digits)
   "Return a TOTP token using the secret hex STRING and current time.
 TIME is used as counter value instead of current time, if non-nil.

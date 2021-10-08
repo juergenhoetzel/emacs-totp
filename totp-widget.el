@@ -44,6 +44,7 @@
     (cancel-timer totp-widget-timer)
     (setf totp-widget-timer nil)))
 
+;;;###autoload
 (defun totp-widget ()
   "Create a widget for `totp-accounts'."
   (interactive)
