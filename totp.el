@@ -1,4 +1,4 @@
-;;; totp.el --- Time-based One-time Password (TOTP) in elisp  -*- lexical-binding: t; -*-
+;;; totp.el --- Time-based One-time Password (TOTP) -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  Jürgen Hötzel
 
