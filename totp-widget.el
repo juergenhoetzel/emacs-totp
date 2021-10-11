@@ -3,7 +3,6 @@
 ;; Copyright (C) 2021  Jürgen Hötzel
 
 ;; Author: Jürgen Hötzel <juergen@hoetzel.info>
-;; Package-Requires: ((emacs "27.1"))
 ;; Version:    0.1
 ;; URL: https://github.com/juergenhoetzel/emacs-totp
 ;; Keywords: tools pass password

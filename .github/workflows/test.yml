@@ -38,6 +38,10 @@ jobs:
       run: |
         eldev test
 
+    - name: Run linter
+      run: |
+        eldev lint
+
     - name: Byte-compile project
       run: |
         eldev -dtT -C compile --set all --warnings-as-errors
