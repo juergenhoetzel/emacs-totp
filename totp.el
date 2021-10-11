@@ -71,7 +71,7 @@ if CREATE is non-nil create a new token."
     (when (functionp secret)
       (setq secret (funcall secret)))
     (unless (string-match-p "^[0-9a-fA-F]\\{2\\}+$" secret)
-      (error "Invalid hex encoded string: %s" secret))
+      (user-error "Invalid hex encoded string: %s" secret))
     (when save-function
       (funcall save-function))
     (if (eq last-command 'kill-region)
