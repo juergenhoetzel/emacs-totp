@@ -71,7 +71,7 @@
       (widget-insert (format "\n%s: " account))
       (widget-create 'push-button :notify (lambda (&rest _)
 					    (totp-copy-pin-as-kill account)
-					    (message "Code for %s copyied to kill-ring" account))
+					    (message "Code for %s copied to kill-ring" account))
 		     (totp secret))))
   (widget-insert "\n")
   (use-local-map widget-keymap)
