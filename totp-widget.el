@@ -48,7 +48,7 @@
   "Create a widget for `totp-accounts'."
   (interactive)
   (totp-widget--cancel-timer)
-  (when (called-interactively-p)
+  (when (called-interactively-p 'interactive)
     (switch-to-buffer "*TOTP Accounts*"))
   (with-current-buffer "*TOTP Accounts*"
       (kill-all-local-variables)
