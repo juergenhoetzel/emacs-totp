@@ -48,41 +48,44 @@
   "Create a widget for `totp-accounts'."
   (interactive)
   (totp-widget--cancel-timer)
-  (switch-to-buffer "*TOTP Accounts*")
-  (kill-all-local-variables)
-  (make-local-variable 'totp-repeat)
-  (let ((inhibit-read-only t))
-    (erase-buffer))
-  (remove-overlays)
-  (widget-insert "Current TOTP accounts:\n\n")
-  (widget-insert "[")
-  ;; FIXME: This should be read_only
-  (setf totp-widget-progress
-	(widget-create 'editable-field
-                       :size 30
-                       :format "%v" ; Text after the field!
-                       (make-string (totp-widget--elapsed) ?#)))
-  (widget-insert "]\n")
-  (dolist (account (totp-accounts))
-    (let ((secret (plist-get  (totp--auth-info account) :secret)))
-      (when (functionp secret)
-	(setq secret (funcall secret)))
-      (widget-insert (format "\n%s: " account))
-      (widget-create 'push-button :notify (lambda (&rest _)
-					    (totp-copy-pin-as-kill account)
-					    (message "Code for %s copied to kill-ring" account))
-		     (totp secret))))
-  (widget-insert "\n")
-  (use-local-map widget-keymap)
-  (widget-setup)
-  ;; FIXME: Prevent race condition
-  (setf totp-widget-timer (run-with-timer 1 0.7 (lambda ()
-						  (let ((elapsed (totp-widget--elapsed)))
-						    (if (zerop elapsed)
-							(totp-widget)
-						      (save-excursion
-							(widget-value-set totp-widget-progress (make-string elapsed ?#))))))))
-  (add-hook 'kill-buffer-hook #'totp-widget--cancel-timer nil t))
+  (when (called-interactively-p)
+    (switch-to-buffer "*TOTP Accounts*"))
+  (with-current-buffer "*TOTP Accounts*"
+      (kill-all-local-variables)
+      (make-local-variable 'totp-repeat)
+      (let ((inhibit-read-only t))
+	(erase-buffer))
+      (remove-overlays)
+      (widget-insert "Current TOTP accounts:\n\n")
+      (widget-insert "[")
+      ;; FIXME: This should be read_only
+      (setf totp-widget-progress
+	    (widget-create 'editable-field
+			   :size 30
+			   :format "%v" ; Text after the field!
+			   (make-string (totp-widget--elapsed) ?#)))
+      (widget-insert "]\n")
+      (dolist (account (totp-accounts))
+	(let ((secret (plist-get  (totp--auth-info account) :secret)))
+	  (when (functionp secret)
+	    (setq secret (funcall secret)))
+	  (widget-insert (format "\n%s: " account))
+	  (widget-create 'push-button :notify (lambda (&rest _)
+						(totp-copy-pin-as-kill account)
+						(message "Code for %s copied to kill-ring" account))
+			 (totp secret))))
+      (widget-insert "\n")
+      (use-local-map widget-keymap)
+      (widget-setup)
+      ;; FIXME: Prevent race condition
+      (setf totp-widget-timer (run-with-timer 1 0.7 (lambda ()
+						      (let ((elapsed (totp-widget--elapsed)))
+							(if (zerop elapsed)
+							    (totp-widget)
+							  (save-excursion
+							    (widget-value-set totp-widget-progress (make-string elapsed ?#))))))))
+      (add-hook 'kill-buffer-hook #'totp-widget--cancel-timer nil t)))
+
 
 (provide 'totp-widget)
 ;;; totp-widget.el ends here
