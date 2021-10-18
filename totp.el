@@ -23,10 +23,11 @@
 
 ;;; Commentary:
 
-;; Create TOPT using gnutls for crypto and auth source for secure storage of
-;; shared secret
+;; Create TOTP using gnutls for crypto and auth source for secure storage of
+;; shared secret.
 ;; Emacs 27.1 is required for bignum support
-;;
+;; New accounts can be created entering a non-existing account name
+;; using the command `totp'.
 
 
 ;;; Code:
@@ -37,14 +38,14 @@
 (require 'auth-source)
 
 (defgroup totp '()
-  "Emacs mode for  Time-based One-time Passwords (TOTP)."
+  "Time-based One-time Passwords (TOTP)."
   :prefix "totp-"
   :group 'totp)
 
 (defun totp-accounts ()
   "Return List of existing account names.
 The actual accounts are retrieved using `auth-source-search'.  New
-accounts can be creaing entering a non-existing account name using the command `totp'."
+accounts can be created entering a non-existing account name using the command `totp'."
   (mapcar (apply-partially #'string-remove-prefix "TOTP:")
 	  (cl-remove-if-not (lambda (host) (string-prefix-p "TOTP:" host))
 			 (mapcar (lambda (token) (plist-get token :host)) (auth-source-search :max 10000)))))
