@@ -19,26 +19,11 @@ history in it will be used at the next invocation.
 
 ** Secret input format
 
-Only HEX-Format is supported yet.
+=totp= supports reading secrets in =HEX= and multiple =base32= variations:
 
-Most OTP providers display secrets in Base32 format. Emacs doesn't
-have support for base32 decoding. You have to convert from Base32 to
-HEX using shell commands, for example:
-#+begin_src bash
-base32 -d <<<OV45GRTQARXOTU72TZLCBLUJDE2FYDSJ|xxd -g0 -p
-#+end_src
-
-Some providers also use non-standard =base32= variations (interleaved
-whitespace and missing padding characters). The following =python=
-one-liner can be use to convert these encoded secrets:
-
-#+begin_src bash
-echo "QANF J3YN T6MU DOSF ABRE DTLE EDES AXBS WW6M 2UZ7 5OMI YLDI ZQWA" \
- |python -c 'import base64;s = input().replace(" ", "");print(base64.b32decode(s.ljust(len(s) + len(s) % 8, "=")).hex())'
-#+end_src
-
-#+RESULTS:
-: 801a54ef0d9f9941ba45006241cd6420c9205c32b5bccd533feb988c2c68cc2c
+Some providers use non-standard =base32= encodings (interleaved
+whitespace and missing padding characters) like:
+=6BQA C4L3 O2FZ YNKR 6H7H IFFX 64GG SZZK SDEO FMV4 KVKI ASYE 65QA=
 
 ** Widget
 
