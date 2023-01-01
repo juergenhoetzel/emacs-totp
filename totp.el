@@ -1,6 +1,6 @@
 ;;; totp.el --- Time-based One-time Password (TOTP) -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  Jürgen Hötzel
+;; Copyright (C) 2021-2023  Jürgen Hötzel
 
 ;; Author: Jürgen Hötzel <juergen@hoetzel.info>
 ;; Package-Requires: ((emacs "27.1"))
@@ -42,6 +42,27 @@
   :prefix "totp-"
   :group 'totp)
 
+(defun totp--base32-char-to-n (char)
+  "Return 5 bit integer value matching base32 CHAR."
+  (cond ((<= ?A char ?Z) (- char ?A))
+	((<= ?a char ?z) (- char ?a))
+	((<= ?2 char ?7) (+ (- char ?2) 26))
+	(t (error "Invalid number range"))))
+
+(defun totp--base32-to-number (string)
+  "Base32-decode STRING and return the result as number.
+
+Handles interleaved whitespaces and missing padding charachters
+gracefuly (The number of padding chars can be deduced from input
+length)."
+  (let* ((s (replace-regexp-in-string "\\( \\|=*$\\)" "" string))
+	 (ntrail (mod (* 5  (length s)) 8)))
+    (ash (seq-reduce (lambda (acc char)
+		  (if (= char ?\s) ;ignore whitespace
+		      acc
+		    (+ (ash acc 5) (totp--base32-char-to-n char))))
+		     s 0) (- ntrail))))
+
 (defun totp-accounts ()
   "Return List of existing account names.
 The actual accounts are retrieved using `auth-source-search'.  New
@@ -65,17 +86,20 @@ if CREATE is non-nil create a new token."
   "Copy current time pin-code of ACCOUNT into the kill ring."
   (interactive (list (completing-read "TOTP Account: " (totp-accounts) nil)))
   (let* ((auth-source-creation-prompts
-	  `((secret . ,(format "TOTP hex encoded secret for %s: " account))))
+	  `((secret . ,(format "TOTP encoded secret (hex or base32) for %s: " account))))
 	 (auth-info (totp--auth-info account t))
-	 (secret (plist-get auth-info :secret))
-	 (save-function (plist-get auth-info :save-function)))
+	 (secret (plist-get auth-info :secret)))
     (when (functionp secret)
       (setq secret (funcall secret)))
-    (unless (string-match-p "^[0-9a-fA-F]\\{2\\}+$" secret)
-      (user-error "Invalid hex encoded string: %s" secret))
-    (when save-function
-      (funcall save-function)
-      (auth-source-forget-all-cached))
+    (unless
+	(condition-case nil
+	    (or (string-match-p "^[0-9a-fA-F]\\{2\\}+$" secret)  ;sanity-checks
+		(totp--base32-to-number secret))
+	  (error nil))
+      (user-error "Cannot decode secret with either hex or base32"))
+    (when-let (save-function (plist-get auth-info :save-function))
+      (auth-source-forget-all-cached)
+      (funcall save-function))
     (if (eq last-command 'kill-region)
         (kill-append (totp secret) nil)
       (kill-new (totp secret)))))
@@ -88,10 +112,13 @@ if CREATE is non-nil create a new token."
 
 ;;;###autoload
 (defun totp(string &optional time digits)
-  "Return a TOTP token using the secret hex STRING and current time.
+  "Return a TOTP token using the secret STRING and current time.
 TIME is used as counter value instead of current time, if non-nil.
 DIGITS is tre  number of pin digits and defaults to 6."
-  (let* ((key-bytes (totp--hex-decode-string (upcase string)))
+  (let* ((hex-string (if (string-match-p "^[0-9a-fA-F]\\{2\\}+$" string)
+			 string		;already in hex format
+		       (format "%X" (totp--base32-to-number string))))
+	 (key-bytes (totp--hex-decode-string (upcase hex-string)))
 	 (counter (truncate (/ (or time (time-to-seconds)) 30)))
 	 (digits (or digits 6))
 	 (format-string (format "%%0%dd" digits))
