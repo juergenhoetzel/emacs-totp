@@ -1,5 +1,5 @@
 #+title: emacs-TOTP implements Time-based One-time Passwords (TOTP) like specified in RFC 6238)
-[[https://github.com/juergenhoetzel/emacs-totp/actions][file:https://github.com/juergenhoetzel/emacs-totp/workflows/CI/badge.svg]]
+[[https://github.com/juergenhoetzel/emacs-totp/actions][file:https://github.com/juergenhoetzel/emacs-totp/workflows/CI/badge.svg]] [[https://melpa.org/#/totp][file:https://melpa.org/packages/totp-badge.svg]]
 * Setup
 
 Until released on [[https://melpa.org/#/][MELPA]]:
