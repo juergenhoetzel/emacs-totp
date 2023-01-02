@@ -79,8 +79,8 @@ command `totp'."
 if CREATE is non-nil create a new token."
   (car
    (auth-source-search
-    :host (format "TOTP:%s" account); PREFIX in order to not to come into conflict with otherentries
-    :user user-login-name
+    :host (format "TOTP:%s" account); PREFIX in order to not to come into conflict with other entries
+    :user (list "noname" user-login-name) ;;use noname for new entries
     :max 1
     :create create)))
 
