@@ -55,12 +55,10 @@
 Handles interleaved whitespaces and missing padding charachters
 gracefuly (The number of padding chars can be deduced from input
 length)."
-  (let* ((s (replace-regexp-in-string "\\( \\|=*$\\)" "" string))
+  (let* ((s (replace-regexp-in-string "\\([[:space:]]\\|=*$\\)" "" string))
 	 (ntrail (mod (* 5  (length s)) 8)))
     (ash (seq-reduce (lambda (acc char)
-		  (if (= char ?\s) ;ignore whitespace
-		      acc
-		    (+ (ash acc 5) (totp--base32-char-to-n char))))
+		       (+ (ash acc 5) (totp--base32-char-to-n char)))
 		     s 0) (- ntrail))))
 
 (defun totp-accounts ()
