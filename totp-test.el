@@ -26,6 +26,14 @@
 (require 'totp)
 (require 'buttercup)
 
+(describe "hex-string"
+	  (it "decodes hex strings with odd number of digets"
+	      (expect (totp--hex-decode-string "F0000")
+		      :to-equal "\x0F\x00\x00"))
+	  (it "decodes hex strings with even number of digets"
+	      (expect (totp--hex-decode-string "F00000")
+		      :to-equal "\xF0\x00\x00")))
+
 (describe "base32"
 	  (it "decodes encodings without padding"
 	      (expect (format "%X" (totp--base32-to-number "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"))
